@@ -15,61 +15,35 @@ elif [[ "$uname_result" == "Darwin" ]]; then
   platform="mac"
 fi
 
-# Find files with trailing whitespace
-if [[ "$platform" == "win" ]]; then
-  for FILE in `git diff --check --cached | sed '/^[+-]/d' | sed -r 's/:[0-9]+: .*//' | uniq` ; do
-    echo -e "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
-    # since $FILE in working directory isn't always equal to $FILE in index, so we backup it
-    mv -f "$FILE" "${FILE}.save"
-    # discard changes in working directory
-    git checkout -- "$FILE"
-    # remove trailing whitespace
-    # in windows, `sed -i` adds ready-only attribute to $FILE(don't kown why), so we use temp file instead
-    sed 's/[[:space:]]*$//' "$FILE" > "${FILE}.bak"
-    mv -f "${FILE}.bak" "$FILE"
-    git add "$FILE"
-    # restore the $FILE
-    sed 's/[[:space:]]*$//' "${FILE}.save" > "$FILE"
-    rm "${FILE}.save"
-  done
-elif [[ "$platform" == "mac" ]]; then
-  for FILE in `git diff --check --cached | sed '/^[+-]/d' | sed -E 's/:[0-9]+: .*//' | uniq` ; do
-    echo -e "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
-    # since $FILE in working directory isn't always equal to $FILE in index, so we backup it
-    mv -f "$FILE" "${FILE}.save"
-    # discard changes in working directory
-    git checkout -- "$FILE"
-    # remove trailing whitespace
-    sed -i "" -E 's/[[:space:]]*$//' "$FILE"
-    git add $FILE
-    # restore the $FILE
-    sed 's/[[:space:]]*$//' "${FILE}.save" > "$FILE"
-    rm "${FILE}.save"
-  done
-else
-  for FILE in `git diff --check --cached | sed '/^[+-]/d' | sed -r 's/:[0-9]+: .*//' | uniq` ; do
-    echo -e "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
-    # since $FILE in working directory isn't always equal to $FILE in index, so we backup it
-    mv -f "$FILE" "${FILE}.save"
-    # discard changes in working directory
-    git checkout -- "$FILE"
-    # remove trailing whitespace
-    sed -i 's/[[:space:]]*$//' "$FILE"
-    git add $FILE
-    # restore the $FILE
-    sed 's/[[:space:]]*$//' "${FILE}.save" > "$FILE"
-    rm "${FILE}.save"
-  done
-fi
-
-if [[ "x`git status -s | grep '^M'`" == "x" ]]; then
-  # empty commit
-  echo
-  echo "NO CHANGES ADDED, ABORT COMMIT!"
-  exit 1
-fi
-
-# Now we can commit
-exit
-
-
+# change IFS to ignore filename's space in |for|
+IFS="
+"
+# autoremove trailing whitespace
+for line in `git diff --check --cached | sed '/^[+-]/d'` ; do
+  # get file name
+  if [[ "$platform" == "mac" ]]; then
+    file="`echo $line | sed -E 's/:[0-9]+: .*//'`"
+  else
+    file="`echo $line | sed -r 's/:[0-9]+: .*//'`"
+  fi  
+  # display tips
+  echo -e "auto remove trailing whitespace in \033[31m$file\033[0m!"
+  # since $file in working directory isn't always equal to $file in index, so we backup it
+  mv -f "$file" "${file}.save"
+  # discard changes in working directory
+  git checkout -- "$file"
+  # remove trailing whitespace
+  if [[ "$platform" == "win" ]]; then
+    # in windows, `sed -i` adds ready-only attribute to $file(I don't kown why), so we use temp file instead
+    sed 's/[[:space:]]*$//' "$file" > "${file}.bak"
+    mv -f "${file}.bak" "$file"
+  elif [[ "$platform" == "mac" ]]; then
+    sed -i "" 's/[[:space:]]*$//' "$file"
+  else
+    sed -i 's/[[:space:]]*$//' "$file"
+  fi  
+  git add "$file"
+  # restore the $file
+  sed 's/[[:space:]]*$//' "${file}.save" > "$file"
+  rm "${file}.save"
+done
