@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 # A git hook script to find and fix trailing whitespace
@@ -34,7 +34,7 @@ if [[ "$platform" == "win" ]]; then
   done
 elif [[ "$platform" == "mac" ]]; then
   for FILE in `git diff --check --cached | sed '/^[+-]/d' | sed -E 's/:[0-9]+: .*//' | uniq` ; do
-    echo "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
+    echo -e "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
     # since $FILE in working directory isn't always equal to $FILE in index, so we backup it
     mv -f "$FILE" "${FILE}.save"
     # discard changes in working directory
@@ -47,9 +47,8 @@ elif [[ "$platform" == "mac" ]]; then
     rm "${FILE}.save"
   done
 else
-  # TODO(lixianliang): test for linux
   for FILE in `git diff --check --cached | sed '/^[+-]/d' | sed -r 's/:[0-9]+: .*//' | uniq` ; do
-    echo "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
+    echo -e "auto remove trailing whitespace in \033[31m$FILE\033[0m!"
     # since $FILE in working directory isn't always equal to $FILE in index, so we backup it
     mv -f "$FILE" "${FILE}.save"
     # discard changes in working directory
