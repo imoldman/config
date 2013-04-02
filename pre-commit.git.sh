@@ -40,7 +40,7 @@ else
   done
 fi
 
-if [[ "x`git status -s | grep '^ M'`" == "x" ]]; then
+if [[ "x`git status -s | grep '^M'`" == "x" ]]; then
   # empty commit
   echo
   echo "NO CHANGES ADDED, ABORT COMMIT!"
