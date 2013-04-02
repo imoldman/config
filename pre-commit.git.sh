@@ -47,3 +47,13 @@ for line in `git diff --check --cached | sed '/^[+-]/d'` ; do
   sed 's/[[:space:]]*$//' "${file}.save" > "$file"
   rm "${file}.save"
 done
+
+if [[ "x`git status -s | grep '^[A|D|M]'`" == "x" ]]; then
+  # empty commit
+  echo
+  echo "NO CHANGES ADDED, ABORT COMMIT!"
+  exit 1
+fi
+
+# Now we can commit
+exit
