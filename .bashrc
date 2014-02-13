@@ -19,12 +19,12 @@ git config --global alias.cm commit
 git config --global alias.st status
 git config --global alias.ad add
 git config --global alias.df diff
-git config --global alias.dfc diff --cached
+git config --global alias.dfc "diff --cached"
 git config --global alias.br branch
-git config --global alias.lol log --graph --decorate --pretty=oneline --abbrev-commit
-git config --global alias.lola log --graph --decorate --pretty=oneline --abbrev-commit --all
-git config --global alias.subup submodule update --init --recursive
-git config --global alias.subst submodule status --recursive
+git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit"
+git config --global alias.lola "log --graph --decorate --pretty=oneline --abbrev-commit --all"
+git config --global alias.subup "submodule update --init --recursive"
+git config --global alias.subst "submodule status --recursive"
 
 # simple calc
 cpy () {
