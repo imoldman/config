@@ -5,8 +5,7 @@
 # in your commits. Bypass it with the --no-verify option
 # to git-commit
 #
-# usage: a) save this file to |hooks| directory in |.git| whith name |pre-commit|
-#        b) in linux or mac, give it execute mod: |chmod a+x pre-commit|
+# usage: make a soft link to this file, e.g., ln -s ~/config/pre-commit.git.sh ~/some_project/.git/hooks/pre-commit
 
 # detect platform
 platform="win"
