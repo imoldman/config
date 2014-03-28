@@ -53,7 +53,7 @@ done
 if [[ "x`git status -s | grep '^[A|D|M]'`" == "x" ]]; then
   # empty commit
   echo
-  echo "\033[31mNO CHANGES ADDED, ABORT COMMIT!\033[0m"
+  echo -e "\033[31mNO CHANGES ADDED, ABORT COMMIT!\033[0m"
   exit 1
 fi
 
